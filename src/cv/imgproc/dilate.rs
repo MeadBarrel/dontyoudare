@@ -93,27 +93,6 @@ impl Dilate {
             border_value
         }
     }
-
-    pub fn with_kernel(&self, kernel: StructuringElement) -> Self {
-        Self {
-            kernel,
-            ..*self
-        }
-    }
-
-    pub fn with_anchor(&self, anchor: Point) -> Self {
-        Self {
-            anchor,
-            ..*self
-        }
-    }
-
-    pub fn with_iterations(&self, iterations: i32) -> Self {
-        Self {
-            iterations,
-            ..*self
-        }
-    }
 }
 
 

@@ -214,7 +214,6 @@ impl<T> VideoSelectedFileWriterTrait for VideoFileDirWriter<T> where T: VideoFil
         create_dir_all(folder_path)?;
 
         let filename = Utc::now().format(&self.filename_format).to_string();
-        //let full_filename = folder_path.join(Path::new(&filename)).to_str().ok_or(Err(Error::msg("Not a proper file name")))?;
 
         let fnp = Path::new(&filename);
         let joined = folder_path.join(fnp);

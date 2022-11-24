@@ -18,27 +18,6 @@ impl Threshold {
             thresh, maxval, typ
         }
     }
-
-    pub fn with_thresh(&self, thresh: f64) -> Self {
-        Self {
-            thresh,
-            ..*self
-        }
-    }
-
-    pub fn with_maxval(&self, maxval: f64) -> Self {
-        Self {
-            maxval,
-            ..*self
-        }
-    }
-
-    pub fn with_typ(&self, typ: i32) -> Self {
-        Self {
-            typ,
-            ..*self
-        }
-    }
 }
 
 

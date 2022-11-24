@@ -38,8 +38,7 @@ impl Default for MatDiff {
     fn default() -> Self {
         Self {
             blur: GaussianBlur::default(),
-            dilate: Dilate::default().with_iterations(4).with_kernel(
-                StructuringElement::default().with_radius(6)),
+            dilate: Dilate::default(),
             threshold: Threshold::new(6_f64, 255_f64, THRESH_BINARY),
             contours: FindContours::default(),
             contour_area_threshold: 2000,
@@ -57,27 +56,6 @@ impl MatDiff {
         contour_area_threshold: i32) -> Self
     {
         Self { blur, dilate, threshold, contours, contour_area_threshold }
-    }
-
-    pub fn with_blur_radius(&self, radius: i32) -> Self {
-        Self {
-            blur: self.blur.with_blur_radius(radius),
-            ..*self
-        }
-    }
-
-    pub fn with_dilate_iterations(&self, iterations: i32) -> Self {
-        Self {
-            dilate: self.dilate.with_iterations(iterations),
-            ..*self
-        }
-    }
-
-    pub fn with_thresh(&self, thresh: f64) -> Self {
-        Self {
-            threshold: self.threshold.with_thresh(thresh),
-            ..*self
-        }
     }
 
     fn prepare_mat(&self, src: &Mat) -> Result<Mat> {

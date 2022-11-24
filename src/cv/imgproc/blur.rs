@@ -35,28 +35,6 @@ impl GaussianBlur {
     pub fn new(blur_size: Size, sigma_x: f64, sigma_y: f64, border_type: i32) -> Self {
         Self { blur_size, sigma_x, sigma_y, border_type }
     }
-
-    pub fn with_blur_radius(&self, radius: i32) -> Self {
-        Self {
-            blur_size: Size::new(radius, radius),
-            ..*self
-        }
-    }
-
-    pub fn with_sigma(&self, sigma: f64) -> Self {
-        Self {
-            sigma_x: sigma,
-            sigma_y: sigma,
-            ..*self
-        }
-    }
-
-    pub fn with_border_type(&self, border_type: i32) -> Self {
-        Self {
-            border_type,
-            ..*self
-        }
-    }
 }
 
 
