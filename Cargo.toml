@@ -1,0 +1,30 @@
+[package]
+name = "tracker"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "main"
+path = "src/bin/main.rs"
+
+[lib]
+name = "ropencv"
+path = "src/lib.rs"
+crate-type = ["lib"]
+
+
+[dependencies]
+opencv = "0.74.0"
+thiserror = "1.0.37"
+anyhow = "1.0.66"
+redis = "0.22.1"
+chrono = "0.4.23"
+serde = { version="1.0.147", features=["derive"], optional=true }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional=true }
+toml = { version = "0.5.9", optional=true }
+regex = { version="1.7.0", optional=true }
+
+[features]
+file_config = ["dep:serde", "dep:regex" ]
+json_config = ["dep:serde_json", "file_config"]
+toml_config = ["dep:toml", "file_config"]
