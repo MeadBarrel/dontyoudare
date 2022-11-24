@@ -3,6 +3,7 @@ use std::mem;
 use std::rc::Rc;
 use std::time::Instant;
 use opencv::prelude::Mat;
+use log::*;
 use super::state::*;
 use super::state_watching::Watching;
 use super::state_recording_idle::RecordingIdle;
@@ -17,7 +18,7 @@ pub struct RecordingMotion {
 
 impl RecordingMotion {
     pub fn new(config: Rc<StatesConfig>, since: Instant, frames: Vec<Mat>) -> Self {
-        println!("Recording");
+        debug!("Entering RecordingMotion state");
         Self { config, since, frames }
     }
 }

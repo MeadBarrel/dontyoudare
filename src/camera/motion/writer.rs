@@ -1,6 +1,7 @@
 use anyhow::Result;
 use opencv::videoio::VideoWriter;
 use opencv::prelude::Mat;
+use log::*;
 use crate::cv::videoio::{VideoFileDirWriter, VideoFileWriter};
 use crate::cv::VideoSelectedFileWriterTrait;
 
@@ -18,7 +19,7 @@ impl Writer {
     }
 
     pub fn save(&self, content: &Vec<Mat>) -> Result<()> {
-        println!("WRITING");
+        debug!("Saving content of ({} frames)", content.len());
         self.writer.save(content)
     }
 }

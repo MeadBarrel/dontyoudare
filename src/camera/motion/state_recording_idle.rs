@@ -3,6 +3,7 @@ use std::rc::Rc;
 use std::time::Instant;
 use anyhow::Result;
 use opencv::prelude::Mat;
+use log::*;
 use super::state::*;
 use super::state_recording_motion::RecordingMotion;
 use super::state_watching::Watching;
@@ -23,7 +24,7 @@ impl RecordingIdle {
         collected_since: Instant,
         collected_frames_total: Vec<Mat>) -> Self
     {
-        println!("Idle");
+        debug!("Entering RecordingIdle state");
         Self {
             config,
             collected_since,

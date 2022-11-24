@@ -8,11 +8,15 @@ use opencv::{
 use ropencv::cv::*;
 use ropencv::camera::*;
 
+use log::{info};
+use simplelog::*;
+
 
 #[cfg(feature = "toml_config")]
 use toml;
 #[cfg(feature = "toml_config")]
 use std::fs;
+use std::fs::File;
 use std::rc::Rc;
 use std::time::Duration;
 use opencv::highgui::imshow;
@@ -64,7 +68,30 @@ fn init_matdiff() -> Result<MatDiff> {
 }
 
 
+fn init_logger(filename: &str) -> Result<()> {
+    Ok(CombinedLogger::init(
+        vec![
+            TermLogger::new(
+                LevelFilter::Debug,
+                Config::default(),
+                TerminalMode::Mixed,
+                ColorChoice::Auto
+            ),
+            WriteLogger::new(
+                LevelFilter::Info,
+                Config::default(),
+                File::create(filename)?
+            )
+        ]
+    )?)
+}
+
+
 fn main() -> Result<()> {
+    init_logger("log.log");
+
+    info!("Starting");
+
     let mut cam = prepare_camera()?;
     let vf_writer = VideoFileDirWriter::new(
         VideoFileWriter::default(),

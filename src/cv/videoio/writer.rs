@@ -12,6 +12,7 @@ use opencv;
 use opencv::core::{Size, Size_};
 use opencv::imgproc::{InterpolationFlags, resize};
 use opencv::videoio::VideoWriter;
+use log::*;
 
 
 pub trait VideoFileWriterTrait {
@@ -219,7 +220,7 @@ impl VideoSelectedFileWriterTrait for VideoFileDirWriter {
         let joined = folder_path.join(fnp);
         let joined_str = joined.to_str().ok_or(Error::msg("Improper filename"))?;
 
-        println!("{}", &joined_str);
+        debug!("Saving {} frames to: {}", content.len(), &joined_str);
 
         Ok(self.writer.save(&joined_str, content)?)
     }

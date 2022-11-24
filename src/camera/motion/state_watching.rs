@@ -1,6 +1,7 @@
 use std::rc::Rc;
 use std::time::Instant;
 use opencv::prelude::{anyTraitConst, Mat};
+use log::*;
 use super::state::*;
 use super::state_recording_motion::RecordingMotion;
 
@@ -12,7 +13,7 @@ pub struct Watching {
 
 impl Watching {
     pub fn new(config: Rc<StatesConfig>) -> Self {
-        println!("Watching");
+        debug!("Entering Watching state");
         Self { config }
     }
 }
