@@ -82,8 +82,8 @@ pub struct VideoFileWriter {
 }
 
 
-pub struct VideoFileDirWriter<T: VideoFileWriterTrait> {
-    writer: T,
+pub struct VideoFileDirWriter {
+    writer: VideoFileWriter,
     filename_format: String,
     folder: String,
 }
@@ -197,8 +197,8 @@ impl Default for VideoFileWriter {
 }
 
 
-impl<T> VideoFileDirWriter<T> where T: VideoFileWriterTrait {
-    pub fn new(writer: T, filename_format: &str, folder: &str) -> Self {
+impl VideoFileDirWriter {
+    pub fn new(writer: VideoFileWriter, filename_format: &str, folder: &str) -> Self {
         Self {
             writer,
             filename_format: filename_format.to_string(),
@@ -208,7 +208,7 @@ impl<T> VideoFileDirWriter<T> where T: VideoFileWriterTrait {
 }
 
 
-impl<T> VideoSelectedFileWriterTrait for VideoFileDirWriter<T> where T: VideoFileWriterTrait {
+impl VideoSelectedFileWriterTrait for VideoFileDirWriter {
     fn save(&self, content: &Vec<Mat>) -> Result<()> {
         let folder_path = Path::new(&self.folder);
         create_dir_all(folder_path)?;

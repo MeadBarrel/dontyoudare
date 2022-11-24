@@ -6,12 +6,12 @@ use crate::cv::VideoSelectedFileWriterTrait;
 
 
 pub struct Writer {
-    writer: VideoFileDirWriter<VideoFileWriter>,
+    writer: VideoFileDirWriter
 }
 
 
 impl Writer {
-    pub fn new(writer: VideoFileDirWriter<VideoFileWriter>) -> Self {
+    pub fn new(writer: VideoFileDirWriter) -> Self {
         Self {
             writer
         }
