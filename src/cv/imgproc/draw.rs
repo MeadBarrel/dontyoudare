@@ -85,3 +85,26 @@ impl DrawContours {
         Ok(result)
     }
 }
+
+
+#[cfg(feature="file_config")]
+pub mod config {
+    use serde::Deserialize;
+
+    use crate::config::Color;
+    use super::DrawContours;
+
+    #[derive(Deserialize)]
+    struct DrawContoursConfig {
+        color: Color,
+        thickness: i32,
+        line_type: i32
+    }
+
+    impl Into<DrawContours> for DrawContoursConfig {
+        fn into(self) -> DrawContours {
+            DrawContours::new(self.color.into(), self.thickness, self.line_type)
+        }
+    }
+
+}

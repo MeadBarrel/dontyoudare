@@ -118,3 +118,33 @@ impl OneToOneConvert for Dilate {
 
 
 impl OneToOneConvertPrep for Dilate {}
+
+
+#[cfg(feature="file_config")]
+pub mod config {
+    use opencv::core::{BorderTypes, Point, Scalar};
+    use serde::Deserialize;
+
+    use super::{
+        Dilate,
+        StructuringElement
+    };
+
+    #[derive(Deserialize)]
+    struct DilateConfig {
+        radius: i8,
+        iterations: i8,
+    }
+
+    impl Into<Dilate> for DilateConfig {
+        fn into(self) -> Dilate {
+            Dilate::new(
+                StructuringElement::default().with_radius(self.radius as i32),
+                Point::new(-1, -1),
+                self.iterations as i32,
+                BorderTypes::BORDER_ISOLATED as i32,
+                Scalar::default(),
+            )
+        }
+    }
+}

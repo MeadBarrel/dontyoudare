@@ -48,3 +48,28 @@ impl FindContours {
         Ok(result)
     }
 }
+
+
+#[cfg(feature="file_config")]
+pub mod config {
+    use opencv::core::Point;
+    use serde::Deserialize;
+
+    use super::FindContours;
+
+    #[derive(Deserialize)]
+    struct FindContoursConfig {
+        mode: i32,
+        color_approximation: i32,
+    }
+
+    impl Into<FindContours> for FindContoursConfig {
+        fn into(self) -> FindContours {
+            FindContours::new(
+                self.mode,
+                self.color_approximation,
+                Point::new(0, 0)
+            )
+        }
+    }
+}
