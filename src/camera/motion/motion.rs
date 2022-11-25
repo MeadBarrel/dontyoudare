@@ -8,12 +8,17 @@ use opencv::prelude::Mat;
 use crate::camera::motion::state::{StatesConfig};
 use super::state::State;
 use super::state_watching::Watching;
+use serde::Deserialize;
 
 
+#[derive(Deserialize)]
+#[serde(default)]
 pub struct MotionDetect {
     diff: MatDiff,
     states_config: StatesConfig,
+    #[serde(skip_deserializing)]
     prev_frame: Option<Mat>,
+    #[serde(skip_deserializing)]
     state: Box<dyn State>,
 }
 
@@ -27,8 +32,20 @@ impl MotionDetect {
             state: Box::new(Watching::new())
         }
     }
-
 }
+
+
+impl Default for MotionDetect {
+    fn default() -> Self {
+        Self {
+            diff: MatDiff::default(),
+            states_config: StatesConfig::default(),
+            prev_frame: None,
+            state: Box::new(Watching::new())
+        }
+    }
+}
+
 
 impl Handler for MotionDetect  {
     fn new_frame(mut self, frame: &Mat) -> Result<Self> {

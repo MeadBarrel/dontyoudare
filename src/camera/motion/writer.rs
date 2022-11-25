@@ -1,12 +1,16 @@
+use std::ptr::write;
 use anyhow::Result;
 use opencv::videoio::VideoWriter;
 use opencv::prelude::Mat;
 use log::*;
+use serde::Deserialize;
 use crate::cv::videoio::{VideoFileDirWriter, VideoFileWriter};
 use crate::cv::VideoSelectedFileWriterTrait;
 
 
+#[derive(Default, Deserialize)]
 pub struct Writer {
+    #[serde(flatten)]
     writer: VideoFileDirWriter
 }
 

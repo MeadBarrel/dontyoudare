@@ -1,10 +1,10 @@
 use opencv::core::{ToInputArray, ToOutputArray};
 use opencv::Error;
 use opencv::imgproc::threshold;
+use serde::Deserialize;
 use super::traits::*;
 
 
-#[derive(Clone, Copy)]
 pub struct Threshold {
     thresh: f64,
     maxval: f64,

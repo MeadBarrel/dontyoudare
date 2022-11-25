@@ -42,6 +42,14 @@ impl<'de> Deserialize<'de> for Color {
 }
 
 
+pub fn deserialize_color<'de, D>(deserializer: D) -> Result<Scalar, D::Error>
+    where D: Deserializer<'de> {
+    let src_color: Color = Deserialize::deserialize(deserializer)?;
+    let result: Scalar = src_color.into();
+    Ok(result)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::Color;

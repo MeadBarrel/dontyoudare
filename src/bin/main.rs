@@ -1,70 +1,22 @@
+use std::{fs::File, fs};
+use std::time::Duration;
 use anyhow::Result;
 use opencv::{
     prelude::*,
     videoio,
-    highgui,
+    videoio::{VideoCaptureTrait, VideoCapture},
+    highgui::*,
 };
-
-use ropencv::cv::*;
-use ropencv::camera::*;
-
-use log::{info};
+use log::*;
 use simplelog::*;
 
+use ropencv::{
+    camera::*,
+    cv::videoio::*,
+};
 
 #[cfg(feature = "toml_config")]
 use toml;
-#[cfg(feature = "toml_config")]
-use std::fs;
-use std::fs::File;
-use std::rc::Rc;
-use std::time::Duration;
-use opencv::highgui::imshow;
-use opencv::imgproc::InterpolationFlags;
-use opencv::videoio::VideoWriter;
-use serde::Deserialize;
-use ropencv::camera::handler::Handler;
-#[cfg(feature = "toml_config")]
-use ropencv::config::config::MatDiffConfig;
-use ropencv::camera::motion::motion::MotionDetect;
-use ropencv::camera::motion::writer::Writer;
-use ropencv::camera::motion::state::StatesConfig;
-use ropencv::cv::videoio::writer::config::VideoFileWriterConfig;
-
-
-const MAT1: i32 = 1;
-const MAT2: i32 = 2;
-const DIFF: i32 = 4;
-const DILATE: i32 = 8;
-const THRESHOLD: i32 = 16;
-const CONTOURS: i32 = 32;
-
-const SHOW_FRAMES: i32 = DIFF | DILATE | THRESHOLD | CONTOURS;
-
-
-#[derive(Deserialize, Default)]
-#[serde(default)]
-struct ConfigModel {
-    diff: MatDiffConfig,
-    filewriter: VideoFileWriterConfig,
-}
-
-
-#[derive(Default)]
-struct ConfigValues {
-    diff: MatDiff,
-    filewriter: VideoFileWriter
-}
-
-
-impl Into<ConfigValues> for ConfigModel {
-    fn into(self) -> ConfigValues {
-        ConfigValues {
-            diff: self.diff.into(),
-            filewriter: self.filewriter.into()
-        }
-    }
-}
 
 
 fn prepare_camera() -> Result<videoio::VideoCapture> {
@@ -82,17 +34,15 @@ fn read_camera(camera: &mut videoio::VideoCapture) -> Result<Mat> {
 }
 
 #[cfg(not(feature = "toml_config"))]
-fn init_configurate() -> Result<Config> {
-    Ok(ConfigValues::default())
+fn init_configurate() -> Result<MotionDetect> {
+    Ok(MotionDetect::default())
 }
 
 
 #[cfg(feature = "toml_config")]
-fn configurate() -> Result<ConfigValues> {
+fn configurate() -> Result<MotionDetect> {
     let config_toml = fs::read_to_string("config.toml")?;
-    //let config: MatDiffConfig = toml::from_str(&config_toml)?;
-    let config: ConfigModel = toml::from_str(&config_toml)?;
-    Ok(config.into())
+    Ok(toml::from_str(&config_toml)?)
 }
 
 
@@ -121,22 +71,8 @@ fn main() -> Result<()> {
     info!("Starting");
 
     let mut cam = prepare_camera()?;
-    let config = configurate()?;
+    let mut md = configurate()?;
 
-    let vf_writer = VideoFileDirWriter::new(
-        config.filewriter,
-        "%Y-%m-%d-%H-%M-%S.avi",
-        "output",
-    );
-
-    let diff = config.diff;
-    let config = StatesConfig {
-        writer: Writer::new(vf_writer),
-        min_video_duration: Duration::from_secs(3),
-        max_video_duration: Duration::from_secs(15),
-        max_idle_gap: Duration::from_secs(3)
-    };
-    let mut md = MotionDetect::new(diff, config);
 
     loop {
         let mut frame = read_camera(&mut cam)?;
@@ -145,7 +81,7 @@ fn main() -> Result<()> {
 
         imshow("frame", &frame)?;
 
-        let key = highgui::wait_key(1)?;
+        let key = wait_key(1)?;
         if key == 113 {
             break;
         }

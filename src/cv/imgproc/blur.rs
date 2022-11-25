@@ -8,10 +8,14 @@ use opencv::{
     imgproc::gaussian_blur
 };
 use opencv::core::{ToInputArray, ToOutputArray};
+use serde::Deserialize;
+use crate::config::deserialize_size;
 
 
-#[derive(Clone, Copy)]
+#[derive(Deserialize, Clone, Copy)]
+#[serde(default)]
 pub struct GaussianBlur {
+    #[serde(deserialize_with="deserialize_size")]
     pub blur_size: Size,
     pub sigma_x: f64,
     pub sigma_y: f64,
