@@ -1,33 +1,37 @@
+use anyhow::Result;
+use std::mem;
 use std::rc::Rc;
 use super::super::handler::Handler;
 use super::super::matdiff::MatDiff;
 use super::writer::Writer;
 use opencv::prelude::Mat;
-use crate::camera::motion::state::StatesConfig;
+use crate::camera::motion::state::{StatesConfig};
 use super::state::State;
 use super::state_watching::Watching;
 
 
 pub struct MotionDetect {
     diff: MatDiff,
+    states_config: StatesConfig,
     prev_frame: Option<Mat>,
     state: Box<dyn State>,
 }
 
 
 impl MotionDetect {
-    pub fn new(diff: MatDiff, config: Rc<StatesConfig>) -> Self {
+    pub fn new(diff: MatDiff, states_config: StatesConfig) -> Self {
         Self {
             diff,
+            states_config,
             prev_frame: None,
-            state: Box::new(Watching::new(config.clone()))
+            state: Box::new(Watching::new())
         }
     }
 
 }
 
 impl Handler for MotionDetect  {
-    fn new_frame(&mut self, frame: &Mat) -> anyhow::Result<()> {
+    fn new_frame(mut self, frame: &Mat) -> Result<Self> {
         let prev_frame: &Mat;
 
         match &self.prev_frame {
@@ -41,13 +45,18 @@ impl Handler for MotionDetect  {
         let diff = self.diff.diff(&prev_frame, &frame)?;
         let frames_differ = diff.are_different();
 
-        match self.state.handle(frame, frames_differ)? {
-            Some(state) => { self.state = state }
-            None => {}
-        };
+        let new_state = self.state.handle(frame, &self.states_config, frames_differ);
+
+        match new_state {
+            Ok(state) => { self.state = state }
+            Err(E) => {
+                self.state = Box::new(Watching::new());
+                return Err(E)
+            }
+        }
 
         self.prev_frame = Some(frame.clone());
 
-        Ok(())
+        Ok(self)
     }
 }

@@ -2,12 +2,15 @@ use std::rc::Rc;
 use std::time::Duration;
 use anyhow::Result;
 use opencv::prelude::Mat;
+use crate::camera::MatDiffPipe;
 use super::writer::Writer;
 
 
-pub type StateResult = Result<Option<Box<dyn State>>>;
+pub type StateResult = Result<Box<dyn State>>;
 
-pub const STATE_UNCHANGED: StateResult = Ok(None);
+pub fn change_state(state: impl State + 'static) -> StateResult {
+    Ok(Box::new(state))
+}
 
 
 pub struct StatesConfig {
@@ -19,15 +22,14 @@ pub struct StatesConfig {
 
 
 pub trait State {
-    fn handle(&mut self, frame: &Mat, changed: bool) -> Result<Option<Box<dyn State>>> {
-        if changed { self.handle_changed(frame) } else { self.handle_unchanged(frame) }
+    fn handle(self: Box<Self>, frame: &Mat, config: &StatesConfig, changed: bool) -> StateResult {
+        match changed {
+            true => self.handle_changed(frame, config),
+            false => self.handle_unchanged(frame, config)
+        }
     }
 
-    fn handle_changed(&mut self, frame: &Mat) -> Result<Option<Box<dyn State>>> {
-        Ok(None)
-    }
-
-    fn handle_unchanged(&mut self, frame: &Mat) -> Result<Option<Box<dyn State>>> {
-        Ok(None)
-    }
+    fn handle_changed(self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult;
+    fn handle_unchanged(self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult;
 }
+

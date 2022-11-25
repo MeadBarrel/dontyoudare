@@ -10,7 +10,6 @@ use super::state_watching::Watching;
 
 
 pub struct RecordingIdle {
-    config: Rc<StatesConfig>,
     since: Instant,
     frames: Vec<Mat>,
     collected_since: Instant,
@@ -20,13 +19,11 @@ pub struct RecordingIdle {
 
 impl RecordingIdle {
     pub fn new(
-        config: Rc<StatesConfig>,
         collected_since: Instant,
         collected_frames_total: Vec<Mat>) -> Self
     {
         debug!("Entering RecordingIdle state");
         Self {
-            config,
             collected_since,
             collected_frames_total,
             since: Instant::now(),
@@ -37,34 +34,27 @@ impl RecordingIdle {
 
 
 impl State for RecordingIdle {
-    fn handle_changed(&mut self, frame: &Mat) -> Result<Option<Box<dyn State>>> {
-        let mut new_vec = mem::take(&mut self.collected_frames_total);
-        new_vec.extend(mem::take(&mut self.frames));
-        new_vec.push(frame.clone());
-
-        Ok(Some(Box::new(
-            RecordingMotion::new(
-                self.config.clone(),
-                self.collected_since.clone(),
-                new_vec,
-            )
-        )))
-    }
-
-    fn handle_unchanged(&mut self, frame: &Mat) -> Result<Option<Box<dyn State>>>
-    {
+    fn handle_changed(mut self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult {
         self.frames.push(frame.clone());
-        let cannot_wait = self.since.elapsed() > self.config.max_idle_gap;
-        let video_too_short = self.collected_since.elapsed() - self.since.elapsed()
-            < self.config.min_video_duration;
-
-        if cannot_wait {
-            if !video_too_short {
-                self.config.writer.save(&self.collected_frames_total);
-            }
-            return Ok(Some(Box::new(Watching::new(self.config.clone()))));
-        }
-
-        STATE_UNCHANGED
+        change_state(
+            RecordingMotion::new(
+                self.collected_since,
+                [self.collected_frames_total, self.frames].concat()
+            )
+        )
     }
+
+    fn handle_unchanged(mut self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult {
+        let elapsed = self.since.elapsed();
+        if elapsed < config.max_idle_gap {
+            self.frames.push(frame.clone());
+            return Ok(self)
+        }
+        info!("Total time elapsed: {:?}\nTotal motion captured: {:?}", self.collected_since.elapsed(), self.collected_since.elapsed() - elapsed);
+        if self.collected_since.elapsed() - elapsed > config.min_video_duration {
+            config.writer.save(&self.collected_frames_total);
+        }
+        change_state(Watching::new())
+    }
+
 }

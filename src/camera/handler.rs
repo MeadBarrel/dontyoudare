@@ -4,5 +4,5 @@ use opencv::{
 };
 
 pub trait Handler {
-    fn new_frame(&mut self, frame: &Mat) -> Result<()>;
+    fn new_frame(self, frame: &Mat) -> Result<Self> where Self: Sized;
 }

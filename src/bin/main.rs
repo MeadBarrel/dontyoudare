@@ -130,18 +130,18 @@ fn main() -> Result<()> {
     );
 
     let diff = config.diff;
-    let config = Rc::new(StatesConfig {
+    let config = StatesConfig {
         writer: Writer::new(vf_writer),
         min_video_duration: Duration::from_secs(3),
         max_video_duration: Duration::from_secs(15),
         max_idle_gap: Duration::from_secs(3)
-    });
-    let mut md = MotionDetect::new(diff, config.clone());
+    };
+    let mut md = MotionDetect::new(diff, config);
 
     loop {
         let mut frame = read_camera(&mut cam)?;
 
-        md.new_frame(&frame)?;
+        md = md.new_frame(&frame)?;
 
         imshow("frame", &frame)?;
 
