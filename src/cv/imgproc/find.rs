@@ -50,7 +50,6 @@ impl FindContours {
 }
 
 
-#[cfg(feature="file_config")]
 pub mod config {
     use opencv::core::Point;
     use serde::Deserialize;

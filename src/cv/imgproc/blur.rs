@@ -50,7 +50,6 @@ impl OneToOneConvert for GaussianBlur {
 impl OneToOneConvertPrep for GaussianBlur {}
 
 
-#[cfg(feature="file_config")]
 pub mod config {
     use serde::Deserialize;
 

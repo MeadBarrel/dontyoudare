@@ -87,7 +87,6 @@ impl DrawContours {
 }
 
 
-#[cfg(feature="file_config")]
 pub mod config {
     use serde::Deserialize;
 

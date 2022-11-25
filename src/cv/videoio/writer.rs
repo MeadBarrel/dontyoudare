@@ -16,9 +16,6 @@ use log::*;
 use serde::Deserialize;
 
 
-#[cfg(feature = "file_config")]
-
-
 pub trait VideoFileWriterTrait {
     //! Writes a video file to `path`
     fn save(&self, path: &str, content: &Vec<Mat>) -> Result<()>;
@@ -230,7 +227,6 @@ impl VideoSelectedFileWriterTrait for VideoFileDirWriter {
 }
 
 
-#[cfg(feature="file_config")]
 pub mod config {
     use std::time::Duration;
     use opencv::core::Size;

@@ -120,7 +120,6 @@ impl OneToOneConvert for Dilate {
 impl OneToOneConvertPrep for Dilate {}
 
 
-#[cfg(feature="file_config")]
 pub mod config {
     use opencv::core::{BorderTypes, Point, Scalar};
     use serde::Deserialize;
