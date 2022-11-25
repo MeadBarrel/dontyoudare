@@ -52,29 +52,3 @@ impl OneToOneConvert for GaussianBlur {
 
 
 impl OneToOneConvertPrep for GaussianBlur {}
-
-
-pub mod config {
-    use serde::Deserialize;
-
-    use super::GaussianBlur;
-    use opencv::core::Size;
-
-    #[derive(Deserialize)]
-    struct GaussianBlurConfig {
-        radius: i8,
-        sigma: f64,
-        border_type: i32,
-    }
-
-    impl Into<GaussianBlur> for GaussianBlurConfig {
-        fn into(self) -> GaussianBlur {
-            GaussianBlur::new(
-                Size::new(self.radius as i32, self.radius as i32),
-                self.sigma,
-                self.sigma,
-                self.border_type
-            )
-        }
-    }
-}
