@@ -22,13 +22,14 @@ use std::time::Duration;
 use opencv::highgui::imshow;
 use opencv::imgproc::InterpolationFlags;
 use opencv::videoio::VideoWriter;
+use serde::Deserialize;
 use ropencv::camera::handler::Handler;
 #[cfg(feature = "toml_config")]
 use ropencv::config::config::MatDiffConfig;
 use ropencv::camera::motion::motion::MotionDetect;
 use ropencv::camera::motion::writer::Writer;
 use ropencv::camera::motion::state::StatesConfig;
-
+use ropencv::cv::videoio::writer::config::VideoFileWriterConfig;
 
 
 const MAT1: i32 = 1;
@@ -39,6 +40,32 @@ const THRESHOLD: i32 = 16;
 const CONTOURS: i32 = 32;
 
 const SHOW_FRAMES: i32 = DIFF | DILATE | THRESHOLD | CONTOURS;
+
+
+#[derive(Deserialize, Default)]
+#[serde(default)]
+struct ConfigModel {
+    diff: MatDiffConfig,
+    filewriter: VideoFileWriterConfig,
+}
+
+
+#[derive(Default)]
+struct ConfigValues {
+    diff: MatDiff,
+    filewriter: VideoFileWriter
+}
+
+
+impl Into<ConfigValues> for ConfigModel {
+    fn into(self) -> ConfigValues {
+        ConfigValues {
+            diff: self.diff.into(),
+            filewriter: self.filewriter.into()
+        }
+    }
+}
+
 
 fn prepare_camera() -> Result<videoio::VideoCapture> {
     let mut cam = videoio::VideoCapture::new(0, videoio::CAP_ANY)?;
@@ -55,15 +82,16 @@ fn read_camera(camera: &mut videoio::VideoCapture) -> Result<Mat> {
 }
 
 #[cfg(not(feature = "toml_config"))]
-fn init_matdiff() -> Result<MatDiff> {
-    Ok(MatDiff::default())
+fn init_configurate() -> Result<Config> {
+    Ok(ConfigValues::default())
 }
 
 
 #[cfg(feature = "toml_config")]
-fn init_matdiff() -> Result<MatDiff> {
+fn configurate() -> Result<ConfigValues> {
     let config_toml = fs::read_to_string("config.toml")?;
-    let config: MatDiffConfig = toml::from_str(&config_toml)?;
+    //let config: MatDiffConfig = toml::from_str(&config_toml)?;
+    let config: ConfigModel = toml::from_str(&config_toml)?;
     Ok(config.into())
 }
 
@@ -93,12 +121,15 @@ fn main() -> Result<()> {
     info!("Starting");
 
     let mut cam = prepare_camera()?;
+    let config = configurate()?;
+
     let vf_writer = VideoFileDirWriter::new(
-        VideoFileWriter::default(),
+        config.filewriter,
         "%Y-%m-%d-%H-%M-%S.avi",
         "output",
     );
-    let diff = MatDiff::default();
+
+    let diff = config.diff;
     let config = Rc::new(StatesConfig {
         writer: Writer::new(vf_writer),
         min_video_duration: Duration::from_secs(3),
