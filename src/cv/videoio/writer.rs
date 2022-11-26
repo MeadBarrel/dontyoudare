@@ -25,7 +25,7 @@ pub trait VideoFileWriterTrait {
 
 pub trait VideoSelectedFileWriterTrait {
     //! Writes a video file
-    fn save(&self, content: &Vec<Mat>) -> Result<()>;
+    fn save(&self, content: &Vec<Mat>) -> Result<String>;
 }
 
 
@@ -229,7 +229,7 @@ impl VideoFileDirWriter {
 
 
 impl VideoSelectedFileWriterTrait for VideoFileDirWriter {
-    fn save(&self, content: &Vec<Mat>) -> Result<()> {
+    fn save(&self, content: &Vec<Mat>) -> Result<String> {
         let folder_path = Path::new(&self.folder);
         create_dir_all(folder_path)?;
 
@@ -241,6 +241,8 @@ impl VideoSelectedFileWriterTrait for VideoFileDirWriter {
 
         debug!("Saving {} frames to: {}", content.len(), &joined_str);
 
-        Ok(self.writer.save(&joined_str, content)?)
+        self.writer.save(&joined_str, content)?;
+
+        Ok(joined_str.to_string())
     }
 }

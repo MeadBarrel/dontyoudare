@@ -6,10 +6,9 @@ use crossbeam_channel::unbounded;
 use log::*;
 use simplelog::*;
 
-use signals::*;
+use ropencv::signals::*;
 
 mod camera;
-mod signals;
 
 #[cfg(feature = "telegram")]
 mod telegram;

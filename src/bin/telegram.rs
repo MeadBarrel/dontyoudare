@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 use anyhow::Result;
 use log::info;
@@ -10,9 +12,10 @@ use teloxide::{
     types::Update,
     dispatching::UpdateFilterExt,
 };
+use teloxide::types::InputFile;
 use tokio;
 
-use super::signals::*;
+use ropencv::signals::*;
 
 type Shared<T> = Arc<Mutex<T>>;
 
@@ -43,7 +46,7 @@ pub async fn start_bot(sender: Sender, receiver: Receiver) -> Result<()> {
         Update::filter_message().endpoint(handle_commands)
     );
 
-    // tokio::spawn(stupid_loop(bot.clone(), rec.clone()));
+    tokio::spawn(notificator_loop(bot.clone(), receiver.clone(), chat_id));
 
     Dispatcher::builder(bot.clone(), handler )
         .dependencies(deps![sender, chat_id])
@@ -51,6 +54,22 @@ pub async fn start_bot(sender: Sender, receiver: Receiver) -> Result<()> {
         .dispatch()
         .await;
 
+    Ok(())
+}
+
+
+async fn notificator_loop(bot: Arc<Bot>, receiver: Receiver, chat_id: ChatId) -> Result<()> {
+    loop {
+        match receiver.try_recv() {
+            Ok(Signal::MotionCaptured(path)) => {
+                info!("Captured motion at {:?}", path);
+                let req = bot.send_message(chat_id, "jksdjask".to_string()).await;
+                let path_buf = PathBuf::from_str(&path)?;
+                bot.send_video(chat_id, InputFile::file(path_buf)).await;
+            }
+            Ok(_) | Err(_) => {}
+        };
+    }
     Ok(())
 }
 

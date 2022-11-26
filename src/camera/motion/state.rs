@@ -16,23 +16,30 @@ pub fn change_state(state: impl State + 'static) -> StateResult {
 
 #[derive(Deserialize)]
 #[serde(default)]
-pub struct StatesConfig {
-    pub writer: Writer,
+pub struct StatesConfigConfig {
     pub min_video_duration: Duration,
     pub max_video_duration: Duration,
     pub max_idle_gap: Duration,
 }
 
 
-impl Default for StatesConfig {
+impl Default for StatesConfigConfig {
     fn default() -> Self {
         Self {
-            writer: Writer::default(),
             min_video_duration: Duration::from_secs(1),
             max_video_duration: Duration::from_secs(15),
             max_idle_gap: Duration::from_secs(1),
         }
     }
+}
+
+
+
+pub struct StatesConfig {
+    pub writer: Writer,
+    pub min_video_duration: Duration,
+    pub max_video_duration: Duration,
+    pub max_idle_gap: Duration,
 }
 
 

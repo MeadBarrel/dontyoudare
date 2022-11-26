@@ -9,14 +9,15 @@ use opencv::{
 };
 
 use ropencv::camera::{Handler, MotionDetect};
+use ropencv::camera::motion::motion::MotionDetectConfig;
 
 
-use super::signals::*;
+use ropencv::signals::*;
 
 
 pub fn run(sender: Sender, receiver: Receiver) -> Result<()> {
     let mut camera = prepare_camera()?;
-    let mut motiondetect = configure()?;
+    let mut motiondetect = configure()?.create(sender);
     let mut camera_running = true;
 
     loop {
@@ -54,7 +55,7 @@ pub fn run(sender: Sender, receiver: Receiver) -> Result<()> {
 }
 
 
-fn configure() -> Result<MotionDetect> {
+fn configure() -> Result<MotionDetectConfig> {
     let config_toml = fs::read_to_string("config.toml")?;
     Ok(toml::from_str(&config_toml)?)
 }
