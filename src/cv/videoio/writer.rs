@@ -197,7 +197,7 @@ impl VideoFileWriterTrait for VideoFileWriter {
             }
         };
 
-        writer.release();
+        writer.release()?;
 
         Ok(())
     }
