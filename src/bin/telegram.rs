@@ -63,7 +63,7 @@ async fn notificator_loop(bot: Arc<Bot>, receiver: Receiver, chat_id: ChatId) ->
         match receiver.try_recv() {
             Ok(Signal::MotionCaptured(path)) => {
                 info!("Captured motion at {:?}", path);
-                let req = bot.send_message(chat_id, "jksdjask".to_string()).await;
+                let req = bot.send_message(chat_id, "Detected motion".to_string()).await;
                 let path_buf = PathBuf::from_str(&path)?;
                 bot.send_video(chat_id, InputFile::file(path_buf)).await;
             }
