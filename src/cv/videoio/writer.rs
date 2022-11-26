@@ -207,7 +207,7 @@ impl VideoFileWriterTrait for VideoFileWriter {
 impl Default for VideoFileWriter {
     fn default() -> Self {
         Self {
-            fourcc: VideoWriter::fourcc('D', 'I', 'V', 'X').unwrap(),
+            fourcc: VideoWriter::fourcc('m', 'p', '4', 'v').unwrap(),
             fps: FPSConfig::Static(24.),
             frame_size: FrameSizeConfig::DeriveResize(InterpolationFlags::INTER_LANCZOS4 as i32),
             api_preference: None,
