@@ -3,6 +3,7 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use anyhow::Result;
 use crossbeam_channel::unbounded;
+use crossbeam_channel;
 use log::*;
 use simplelog::*;
 
@@ -15,15 +16,27 @@ mod telegram;
 
 
 fn main() {
+    // let (sender, receiver) = unbounded();
+    // let mut broadcast:Broadcast<String> = Broadcast::new(receiver);
+    // let r1 = broadcast.subscribe();
+    // let r2 = broadcast.subscribe();
+    //
+    // broadcast.send("abc".to_string()).unwrap();
+    // println!("r1 {}", r1.recv().unwrap());
+    // println!("r2 {}", r2.recv().unwrap());
+    //
+    // return ();
     init_logger("log.log");
 
     let (sender, receiver) = unbounded();
+    let mut broadcast = Broadcast::new(receiver);
 
-    let mut camera_thread = run_camera(sender.clone(), receiver.clone());
+    let mut camera_thread = run_camera(sender.clone(), broadcast.subscribe());
 
     #[cfg(feature = "telegram")]
-    let mut telegram_thread = run_telegram(sender.clone(), receiver.clone());
+    let mut telegram_thread = run_telegram(sender.clone(), broadcast.subscribe());
 
+    thread::spawn(move || broadcast.run_loop());
 
     camera_thread.join().expect("Camera thread has panicked").unwrap();
 
@@ -59,4 +72,45 @@ fn init_logger(filename: &str) -> Result<()> {
             )
         ]
     )?)
+}
+
+
+struct Broadcast<T> where T: Clone+Send+Sync+'static {
+    receiver: crossbeam_channel::Receiver<T>,
+    subscribers: Vec<crossbeam_channel::Sender<T>>
+}
+
+
+impl<T> Broadcast<T> where T: Clone+Send+Sync+'static {
+    pub fn new(receiver: crossbeam_channel::Receiver<T>) -> Self {
+        Self {
+            receiver,
+            subscribers: Vec::new()
+        }
+    }
+
+    pub fn subscribe(&mut self) -> crossbeam_channel::Receiver<T> {
+        let (sender, receiver) = crossbeam_channel::unbounded();
+        self.subscribers.push(sender);
+        receiver
+    }
+
+    pub fn run_loop(&self) -> Result<()> {
+        loop {
+            self.recv()?;
+        }
+    }
+
+    pub fn recv(&self) -> Result<()> {
+        let msg = self.receiver.recv()?;
+        self.send(msg)?;
+        Ok(())
+    }
+
+    pub fn send(&self, msg: T) -> Result<()> {
+        for sender in &self.subscribers {
+            sender.send(msg.clone())?;
+        }
+        Ok(())
+    }
 }

@@ -75,7 +75,6 @@ impl CameraRunner {
     }
 
     fn handle_signal(&mut self, signal: Signal) -> Result<()> {
-        info!("HANDLING SIGNAL");
         match signal {
             Signal::StopCamera => {
                 info!("Stopping Camera");
