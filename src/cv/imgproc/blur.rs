@@ -3,7 +3,6 @@ use super::traits::*;
 
 
 use opencv::{
-    prelude::Mat,
     core::Size,
     imgproc::gaussian_blur
 };

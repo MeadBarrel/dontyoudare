@@ -7,10 +7,9 @@ use crate::config::{deserialize_size, deserialize_point};
 use opencv::{
     prelude::Mat,
     core::Size,
-    imgproc::gaussian_blur
 };
 use opencv::core::{BorderTypes, Point, Scalar, ToInputArray, ToOutputArray};
-use opencv::imgproc::{dilate, get_structuring_element, MORPH_ELLIPSE, MORPH_GRADIENT, MORPH_RECT, MORPH_TOPHAT};
+use opencv::imgproc::{dilate, get_structuring_element, MORPH_RECT};
 
 
 #[derive(Clone, Copy, Deserialize)]

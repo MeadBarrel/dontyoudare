@@ -2,7 +2,6 @@ use opencv::prelude::*;
 use opencv::core::{no_array, Point, Scalar, ToInputArray, ToInputOutputArray};
 use opencv::imgproc::{draw_contours, LINE_AA};
 use opencv::Result;
-use std::result::{Result as StdResult};
 use serde::Deserialize;
 use crate::config::deserialize_color;
 

@@ -1,7 +1,6 @@
 use opencv::Result;
-use opencv::prelude::*;
-use opencv::core::{InputArray, Mat, Point, ToInputArray};
-use opencv::imgproc::{CHAIN_APPROX_NONE, CHAIN_APPROX_SIMPLE, CHAIN_APPROX_TC89_KCOS, CHAIN_APPROX_TC89_L1, find_contours, RETR_EXTERNAL, RETR_FLOODFILL, RETR_TREE};
+use opencv::core::{Point, ToInputArray};
+use opencv::imgproc::{CHAIN_APPROX_TC89_KCOS, find_contours, RETR_TREE};
 use opencv::types::VectorOfMat;
 use serde::Deserialize;
 use crate::config::deserialize_point;

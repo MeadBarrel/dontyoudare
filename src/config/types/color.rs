@@ -23,7 +23,7 @@ impl Into<Scalar> for Color {
 
 impl<'de> Deserialize<'de> for Color {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: Deserializer<'de> {
-        let mut src_text: &str = Deserialize::deserialize(deserializer)?;
+        let src_text: &str = Deserialize::deserialize(deserializer)?;
         let re = Regex::new("#[0-9|A-F|a-f]{8}").map_err(D::Error::custom)?;
 
         if !re.is_match(&src_text) {

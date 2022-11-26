@@ -1,5 +1,5 @@
 use opencv::core::Point;
-use serde::{Deserialize, Deserializer, de::Error};
+use serde::{Deserialize, Deserializer};
 
 
 pub fn deserialize_point<'de, D>(deserializer: D) -> Result<Point, D::Error>

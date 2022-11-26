@@ -3,13 +3,9 @@ use std::path::Path;
 use std::time::Duration;
 use chrono::prelude::*;
 use anyhow::{Error, Result};
-use opencv::{
-    prelude::*,
-    videoio,
-    core::ToInputArray,
-};
+use opencv::prelude::*;
 use opencv;
-use opencv::core::{Size, Size_};
+use opencv::core::Size;
 use opencv::imgproc::{InterpolationFlags, resize};
 use opencv::videoio::VideoWriter;
 use log::*;

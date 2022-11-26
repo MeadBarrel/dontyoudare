@@ -1,10 +1,7 @@
-use std::ptr::write;
 use anyhow::Result;
-use opencv::videoio::VideoWriter;
 use opencv::prelude::Mat;
 use log::*;
-use serde::Deserialize;
-use crate::cv::videoio::{VideoFileDirWriter, VideoFileWriter};
+use crate::cv::videoio::VideoFileDirWriter;
 use crate::cv::VideoSelectedFileWriterTrait;
 use crate::signals::{Sender, Signal};
 

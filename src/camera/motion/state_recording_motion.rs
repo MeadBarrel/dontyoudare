@@ -1,6 +1,3 @@
-use std::borrow::Borrow;
-use std::mem;
-use std::rc::Rc;
 use std::time::Instant;
 use opencv::prelude::Mat;
 use log::*;
@@ -34,7 +31,7 @@ impl State for RecordingMotion {
 
         Ok(self)
     }
-    fn handle_unchanged(self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult {
+    fn handle_unchanged(self: Box<Self>, _: &Mat, _: &StatesConfig) -> StateResult {
         change_state(
             RecordingIdle::new(self.since, self.frames)
         )

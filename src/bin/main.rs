@@ -1,5 +1,4 @@
 use std::fs::File;
-use std::sync::{Arc, Mutex};
 use std::thread;
 use anyhow::Result;
 use crossbeam_channel::unbounded;
@@ -18,15 +17,15 @@ mod broadcast;
 
 
 fn main() {
-    init_logger("log.log");
+    init_logger("log.log").unwrap();
 
     let (sender, receiver) = unbounded();
     let mut broadcast = Broadcast::new(receiver);
 
-    let mut camera_thread = run_camera(sender.clone(), broadcast.subscribe());
+    let camera_thread = run_camera(sender.clone(), broadcast.subscribe());
 
     #[cfg(feature = "telegram")]
-    let mut telegram_thread = run_telegram(sender.clone(), broadcast.subscribe());
+    let telegram_thread = run_telegram(sender.clone(), broadcast.subscribe());
 
     thread::spawn(move || broadcast.run_loop());
 

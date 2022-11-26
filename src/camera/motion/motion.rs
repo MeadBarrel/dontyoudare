@@ -1,6 +1,4 @@
 use anyhow::Result;
-use std::mem;
-use std::rc::Rc;
 use super::super::handler::Handler;
 use super::super::matdiff::MatDiff;
 use super::writer::Writer;
@@ -76,9 +74,9 @@ impl Handler for MotionDetect  {
 
         match new_state {
             Ok(state) => { self.state = state }
-            Err(E) => {
+            Err(e) => {
                 self.state = Box::new(Watching::new());
-                return Err(E)
+                return Err(e)
             }
         }
 

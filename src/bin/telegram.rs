@@ -30,7 +30,7 @@ enum Command {
 
 pub fn run(sender: Sender, receiver: Receiver) -> Result<()>
 {
-    let mut rt = tokio::runtime::Runtime::new().unwrap();
+    let rt = tokio::runtime::Runtime::new().unwrap();
     //thread::spawn(move || stupid_thread(s));
     rt.block_on(start_bot(sender, receiver))?;
     Ok(())
@@ -38,7 +38,7 @@ pub fn run(sender: Sender, receiver: Receiver) -> Result<()>
 
 
 pub async fn start_bot(sender: Sender, receiver: Receiver) -> Result<()> {
-    let mut chat_id: ChatId = ChatId( std::env::var("CHAT_ID")?.parse()? ) ;
+    let chat_id: ChatId = ChatId( std::env::var("CHAT_ID")?.parse()? ) ;
 
     let bot = Arc::new(Bot::from_env());
 
@@ -63,18 +63,17 @@ async fn notificator_loop(bot: Arc<Bot>, receiver: Receiver, chat_id: ChatId) ->
         match receiver.try_recv() {
             Ok(Signal::MotionCaptured(path)) => {
                 info!("Captured motion at {:?}", path);
-                let req = bot.send_message(chat_id, "Detected motion".to_string()).await;
+                bot.send_message(chat_id, "Detected motion".to_string()).await?;
                 let path_buf = PathBuf::from_str(&path)?;
-                bot.send_video(chat_id, InputFile::file(path_buf)).await;
+                bot.send_video(chat_id, InputFile::file(path_buf)).await?;
             }
             Ok(_) | Err(_) => {}
         };
     }
-    Ok(())
 }
 
 
-async fn handle_commands(bot: Arc<Bot>, msg: Message, sender: Sender, chat_id: ChatId) -> Result<()> {
+async fn handle_commands(_: Arc<Bot>, msg: Message, sender: Sender, chat_id: ChatId) -> Result<()> {
 
     // Make sure that only our chat is supported
     if chat_id != msg.chat.id {

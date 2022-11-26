@@ -1,7 +1,4 @@
-use std::mem;
-use std::rc::Rc;
 use std::time::Instant;
-use anyhow::Result;
 use opencv::prelude::Mat;
 use log::*;
 use super::state::*;
@@ -34,7 +31,7 @@ impl RecordingIdle {
 
 
 impl State for RecordingIdle {
-    fn handle_changed(mut self: Box<Self>, frame: &Mat, config: &StatesConfig) -> StateResult {
+    fn handle_changed(mut self: Box<Self>, frame: &Mat, _: &StatesConfig) -> StateResult {
         self.frames.push(frame.clone());
         change_state(
             RecordingMotion::new(
@@ -52,7 +49,7 @@ impl State for RecordingIdle {
         }
         info!("Total time elapsed: {:?}\nTotal motion captured: {:?}", self.collected_since.elapsed(), self.collected_since.elapsed() - elapsed);
         if self.collected_since.elapsed() - elapsed > config.min_video_duration {
-            config.writer.save(&self.collected_frames_total);
+            config.writer.save(&self.collected_frames_total)?;
         }
         change_state(Watching::new())
     }

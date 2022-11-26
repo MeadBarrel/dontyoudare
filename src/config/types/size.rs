@@ -1,5 +1,5 @@
 use opencv::core::Size;
-use serde::{Deserialize, Deserializer, de::Error};
+use serde::{Deserialize, Deserializer};
 
 
 pub fn deserialize_size<'de, D>(deserializer: D) -> Result<Size, D::Error>

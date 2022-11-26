@@ -62,7 +62,7 @@ impl CameraRunner {
     pub fn next(mut self) -> Result<Self> {
         if !self.camera_running { return Ok(self) }
 
-        let mut frame = self.read_camera()?;
+        let frame = self.read_camera()?;
         self.motiondetect = self.motiondetect.new_frame(&frame)?;
 
         self.show_frame(&frame)?;
@@ -104,8 +104,8 @@ fn configure() -> Result<MotionDetectConfig> {
 
 fn prepare_camera() -> Result<VideoCapture> {
     let mut cam = VideoCapture::new(0, CAP_ANY)?;
-    cam.set(CAP_PROP_FRAME_WIDTH, 640_f64);
-    cam.set(CAP_PROP_FRAME_HEIGHT, 480_f64);
+    cam.set(CAP_PROP_FRAME_WIDTH, 640_f64)?;
+    cam.set(CAP_PROP_FRAME_HEIGHT, 480_f64)?;
     Ok(cam)
 }
 

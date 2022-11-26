@@ -1,9 +1,7 @@
-use opencv::highgui::imshow;
 use opencv::prelude::*;
 use opencv::imgproc::{bounding_rect, THRESH_BINARY};
 use opencv::Result;
 use opencv::types::VectorOfMat;
-use redis::pipe;
 use serde::Deserialize;
 use crate::cv::*;
 use crate::config::deserialize_threshold;

@@ -1,4 +1,4 @@
-use opencv::core::{ToInputArray, ToInputOutputArray, ToOutputArray};
+use opencv::core::{ToInputArray, ToOutputArray};
 use opencv::prelude::Mat;
 use opencv::Result;
 
