@@ -3,7 +3,6 @@ use std::time::Duration;
 use anyhow::Result;
 use opencv::prelude::Mat;
 use serde::Deserialize;
-use crate::camera::MatDiffPipe;
 use super::writer::Writer;
 
 
@@ -26,9 +25,9 @@ pub struct StatesConfigConfig {
 impl Default for StatesConfigConfig {
     fn default() -> Self {
         Self {
-            min_video_duration: Duration::from_secs(1),
+            min_video_duration: Duration::from_secs(2),
             max_video_duration: Duration::from_secs(15),
-            max_idle_gap: Duration::from_secs(1),
+            max_idle_gap: Duration::from_secs(3),
         }
     }
 }

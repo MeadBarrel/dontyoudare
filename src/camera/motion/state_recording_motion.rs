@@ -4,7 +4,6 @@ use std::rc::Rc;
 use std::time::Instant;
 use opencv::prelude::Mat;
 use log::*;
-use crate::camera::MatDiffPipe;
 use super::state::*;
 use super::state_watching::Watching;
 use super::state_recording_idle::RecordingIdle;

@@ -2,7 +2,6 @@ use std::rc::Rc;
 use std::time::Instant;
 use opencv::prelude::{anyTraitConst, Mat};
 use log::*;
-use crate::camera::MatDiffPipe;
 use super::state::*;
 use super::state_recording_motion::RecordingMotion;
 

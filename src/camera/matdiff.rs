@@ -9,24 +9,6 @@ use crate::cv::*;
 use crate::config::deserialize_threshold;
 
 
-#[derive(Default)]
-pub struct MatDiffPipe {
-    pub mat1: Mat,
-    pub mat2: Mat,
-    pub diff: Mat,
-    pub threshold: Mat,
-    pub dilate: Mat,
-    pub contours: VectorOfMat,
-}
-
-
-impl MatDiffPipe {
-    pub fn are_different(&self) -> bool {
-        !self.contours.is_empty()
-    }
-}
-
-
 #[derive(Deserialize)]
 #[serde(default)]
 pub struct MatDiff {
@@ -69,7 +51,7 @@ impl MatDiff {
         )
     }
 
-    pub fn diff(&self, src1: &Mat, src2: &Mat) -> Result<MatDiffPipe> {
+    pub fn diff(&self, src1: &Mat, src2: &Mat) -> Result<bool> {
 
         let mat1 = self.prepare_mat(src1)?;
         let mat2 = self.prepare_mat(src2)?;
@@ -88,16 +70,8 @@ impl MatDiff {
             }
         ).collect::<VectorOfMat>();
 
-        Ok(
-            MatDiffPipe {
-                mat1,
-                mat2,
-                diff,
-                dilate,
-                threshold,
-                contours: result_contours,
-            }
-        )
+        Ok(!result_contours.is_empty())
+
 
     }
 }

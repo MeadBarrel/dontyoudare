@@ -70,8 +70,7 @@ impl Handler for MotionDetect  {
             }
         }
 
-        let diff = self.diff.diff(&prev_frame, &frame)?;
-        let frames_differ = diff.are_different();
+        let frames_differ = self.diff.diff(&prev_frame, &frame)?;
 
         let new_state = self.state.handle(frame, &self.states_config, frames_differ);
 
