@@ -103,7 +103,7 @@ impl Default for VideoFileDirWriter {
     fn default() -> Self {
         Self {
             writer: VideoFileWriter::default(),
-            filename_format: "%Y-%m-%d-%H-%M-%S.avi".to_owned(),
+            filename_format: "%Y-%m-%d-%H-%M-%S.mp4".to_owned(),
             folder: "output".to_owned(),
         }
     }
