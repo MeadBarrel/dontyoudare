@@ -25,6 +25,7 @@ impl<T> Broadcast<T> where T: Clone+Send+Sync+'static {
     }
 
     pub fn recv(&self) -> anyhow::Result<()> {
+        println!("RECEIVING");
         let msg = self.receiver.recv()?;
         self.send(msg)?;
         Ok(())

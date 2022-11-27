@@ -1,4 +1,5 @@
 use std::fs;
+use std::time::Duration;
 use toml;
 use anyhow::Result;
 use log::info;
@@ -7,9 +8,15 @@ use opencv::{
     highgui::{imshow, wait_key},
     prelude::Mat,
 };
+use opencv::core::{BORDER_DEFAULT, BorderTypes, Point, Scalar, Size};
+use opencv::imgproc::{InterpolationFlags, MORPH_ELLIPSE, THRESH_BINARY};
+use simplelog::Config;
 
-use ropencv::camera::{Handler, MotionDetect};
+use ropencv::camera::{Handler, MatDiff, MotionDetect, StatesConfig, Writer};
 use ropencv::camera::motion::motion::MotionDetectConfig;
+use ropencv::cv::{Dilate, FindContours, FPSConfig, FrameSizeConfig, GaussianBlur, StructuringElement, Threshold, VideoFileDirWriter, VideoFileWriter, VideoFileWriterTrait};
+use super::config::DiffConfig;
+//use ropencv::camera::motion::motion::MotionDetectConfig;
 
 
 use ropencv::signals::*;
@@ -17,7 +24,7 @@ use ropencv::signals::*;
 
 pub fn run(sender: Sender, receiver: Receiver) -> Result<()> {
     let camera = prepare_camera()?;
-    let motiondetect = configure()?.create(sender);
+    let motiondetect = configure(sender)?;
 
     let mut runner = CameraRunner::new(camera, motiondetect);
 
@@ -96,9 +103,63 @@ impl CameraRunner {
 }
 
 
-fn configure() -> Result<MotionDetectConfig> {
+fn configure(sender: Sender) -> Result<MotionDetect> {
     let config_toml = fs::read_to_string("config.toml")?;
-    Ok(toml::from_str(&config_toml)?)
+    let config: DiffConfig = toml::from_str(&config_toml)?;
+    let diff = MatDiff::new(
+        GaussianBlur::new(
+            Size::new(config.blur_radius, config.blur_radius),
+            config.blug_sigma, config.blug_sigma,
+            BORDER_DEFAULT,
+        ),
+        Dilate::new(
+            StructuringElement::new(
+                MORPH_ELLIPSE,
+                Size::new(
+                    config.dilate_radius,
+                    config.dilate_radius,
+                ),
+                Point::new(-1, -1),
+            ),
+            Point::new(-1, -1),
+            config.dilate_iterations,
+            BorderTypes::BORDER_ISOLATED as i32,
+            Scalar::default()
+
+        ),
+        Threshold::new(
+            config.threshold as f64,
+            255.,
+            THRESH_BINARY,
+        ),
+        FindContours::default(),
+        config.sensitivity
+    );
+    let writer = Writer::new(
+        VideoFileDirWriter::new(
+            VideoFileWriter::new(
+                config.output.fourcc,
+                FPSConfig::Static(config.output.fps),
+                FrameSizeConfig::DeriveResize(InterpolationFlags::INTER_LANCZOS4 as i32),
+                None,
+                true,
+            ),
+            &config.output.result_filename_format,
+            &config.output.result_folder,
+        ),
+        sender
+    );
+    let md = MotionDetect::new(
+        diff,
+        StatesConfig {
+            writer: writer,
+            min_video_duration: Duration::from_secs(config.min_video_duration),
+            max_video_duration: Duration::from_secs(config.max_video_duration),
+            max_idle_gap: Duration::from_secs(config.max_idle_gap),
+        }
+    );
+
+    Ok(md)
 }
 
 

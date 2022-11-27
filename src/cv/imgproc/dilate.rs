@@ -35,6 +35,12 @@ impl Default for StructuringElement {
 
 
 impl StructuringElement {
+    pub fn new(shape: i32, ksize: Size, anchor: Point) -> Self {
+        Self {
+            shape, ksize, anchor
+        }
+    }
+
     pub fn with_shape(&self, shape: i32) -> Self {
         Self {
             shape,

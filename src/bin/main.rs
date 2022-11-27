@@ -14,6 +14,7 @@ mod camera;
 #[cfg(feature = "telegram")]
 mod telegram;
 mod broadcast;
+mod config;
 
 
 fn main() {
