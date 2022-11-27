@@ -12,13 +12,12 @@ use opencv::core::{BORDER_DEFAULT, BorderTypes, Point, Scalar, Size};
 use opencv::imgproc::{InterpolationFlags, MORPH_ELLIPSE, THRESH_BINARY};
 use simplelog::Config;
 
-use ropencv::camera::{Handler, MatDiff, MotionDetect, StatesConfig, Writer};
-use ropencv::cv::*;
-use super::config::DiffConfig;
-//use ropencv::camera::motion::motion::MotionDetectConfig;
+use crate::camera::{Handler, MatDiff, MotionDetect, StatesConfig, Writer};
+use crate::cv::*;
+use crate::config::DiffConfig;
 
 
-use ropencv::signals::*;
+use crate::signals::*;
 
 
 pub fn run(sender: Sender, receiver: Receiver) -> Result<()> {

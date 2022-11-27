@@ -18,7 +18,7 @@ use tokio;
 use tokio::time::sleep;
 
 
-use ropencv::signals::*;
+use crate::signals::*;
 
 type Shared<T> = Arc<Mutex<T>>;
 

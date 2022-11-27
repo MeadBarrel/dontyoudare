@@ -7,10 +7,6 @@ edition = "2021"
 name = "main"
 path = "src/bin/main.rs"
 
-[[bin]]
-name = "tg"
-path = "src/bin/tg.rs"
-
 [lib]
 name = "ropencv"
 path = "src/lib.rs"
@@ -21,20 +17,13 @@ crate-type = ["lib"]
 opencv = "0.74.0"
 thiserror = "1.0.37"
 anyhow = "1.0.66"
-redis = "0.22.1"
 chrono = "0.4.23"
 log = "0.4.17"
 simplelog = "0.12.0"
 crossbeam-channel = "0.5.6"
 teloxide = { version="0.11.2", optional=true, features = ["macros"]  }
-tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"], optional=true }
+tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
 
 serde = { version="1.0.147", features=["derive"] }
-serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional=true }
-toml = { version = "0.5.9", optional=true }
+toml = { version = "0.5.9" }
 regex = { version="1.7.0" }
-
-[features]
-json_config = ["dep:serde_json"]
-toml_config = ["dep:toml"]
-telegram = ["dep:teloxide", "dep:tokio"]

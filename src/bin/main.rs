@@ -5,17 +5,11 @@ use crossbeam_channel::unbounded;
 use crossbeam_channel;
 use log::*;
 use simplelog::*;
-use broadcast::Broadcast;
+use ropencv::broadcast::Broadcast;
 
 use ropencv::signals::*;
-
-mod camera;
-
-#[cfg(feature = "telegram")]
-mod telegram;
-mod broadcast;
-mod config;
-
+use ropencv::cam;
+use ropencv::telegram;
 
 fn main() {
     init_logger("log.log").unwrap();
@@ -25,24 +19,22 @@ fn main() {
 
     let camera_thread = run_camera(sender.clone(), broadcast.subscribe());
 
-    #[cfg(feature = "telegram")]
     let telegram_thread = run_telegram(sender.clone(), broadcast.subscribe());
 
     thread::spawn(move || broadcast.run_loop());
 
     camera_thread.join().expect("Camera thread has panicked").unwrap();
 
-    #[cfg(feature = "telegram")]
     telegram_thread.join().expect("Telegram thread has panicked").unwrap();
 }
 
 
 fn run_camera(sender: Sender, receiver: Receiver) -> thread::JoinHandle<Result<()>> {
-    thread::spawn(|| { camera::run(sender, receiver) })
+    thread::spawn(|| { cam::run(sender, receiver) })
 }
 
-#[cfg(feature = "telegram")]
 fn run_telegram(sender: Sender, receiver: Receiver) -> thread::JoinHandle<Result<()>> {
+    info!("Starting telegram bot");
     thread::spawn(|| { telegram::run(sender, receiver) })
 }
 

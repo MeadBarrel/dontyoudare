@@ -1,6 +1,6 @@
 use opencv::videoio::VideoWriter;
 use serde::Deserialize;
-use ropencv::config::deserialize_fourcc;
+use crate::config::deserialize_fourcc;
 
 
 #[derive(Deserialize)]
