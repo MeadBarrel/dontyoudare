@@ -1,7 +1,5 @@
 use opencv::Result;
-use serde::Deserialize;
 use super::traits::*;
-use crate::config::{deserialize_size, deserialize_point};
 
 
 use opencv::{
@@ -12,13 +10,10 @@ use opencv::core::{BorderTypes, Point, Scalar, ToInputArray, ToOutputArray};
 use opencv::imgproc::{dilate, get_structuring_element, MORPH_RECT};
 
 
-#[derive(Clone, Copy, Deserialize)]
-#[serde(default)]
+#[derive(Clone, Copy)]
 pub struct StructuringElement {
     shape: i32,
-    #[serde(deserialize_with="deserialize_size")]
     ksize: Size,
-    #[serde(deserialize_with="deserialize_point")]
     anchor: Point
 }
 
@@ -76,15 +71,12 @@ impl StructuringElement {
 }
 
 
-#[derive(Clone, Copy, Deserialize)]
-#[serde(default)]
+#[derive(Clone, Copy)]
 pub struct Dilate {
     kernel: StructuringElement,
-    #[serde(deserialize_with="deserialize_point")]
     anchor: Point,
     iterations: i32,
     border_type: i32,
-    #[serde(skip_deserializing)]
     border_value: Scalar
 }
 

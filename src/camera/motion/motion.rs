@@ -7,33 +7,7 @@ use crate::camera::motion::state::{StatesConfig};
 use crate::signals::*;
 use super::state::State;
 use super::state_watching::Watching;
-use serde::Deserialize;
-use crate::camera::state::StatesConfigConfig;
 use crate::cv::VideoFileDirWriter;
-
-
-#[derive(Default, Deserialize)]
-#[serde(default)]
-pub struct MotionDetectConfig {
-    diff: MatDiff,
-    states_config: StatesConfigConfig,
-    writer: VideoFileDirWriter,
-}
-
-
-impl MotionDetectConfig {
-    pub fn create(self, sender: Sender) -> MotionDetect {
-        MotionDetect::new(
-            self.diff,
-            StatesConfig {
-                writer: Writer::new(self.writer, sender),
-                min_video_duration: self.states_config.min_video_duration,
-                max_video_duration: self.states_config.max_video_duration,
-                max_idle_gap: self.states_config.max_idle_gap,
-            }
-        )
-    }
-}
 
 
 pub struct MotionDetect {

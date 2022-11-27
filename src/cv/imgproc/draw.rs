@@ -2,14 +2,10 @@ use opencv::prelude::*;
 use opencv::core::{no_array, Point, Scalar, ToInputArray, ToInputOutputArray};
 use opencv::imgproc::{draw_contours, LINE_AA};
 use opencv::Result;
-use serde::Deserialize;
-use crate::config::deserialize_color;
 
 
-#[derive(Debug, Deserialize)]
-#[serde(default)]
+#[derive(Debug)]
 pub struct DrawContours {
-    #[serde(deserialize_with="deserialize_color")]
     color: Scalar,
     thickness: i32,
     line_type: i32,

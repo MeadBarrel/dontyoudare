@@ -2,17 +2,12 @@ use opencv::prelude::*;
 use opencv::imgproc::{bounding_rect, THRESH_BINARY};
 use opencv::Result;
 use opencv::types::VectorOfMat;
-use serde::Deserialize;
 use crate::cv::*;
-use crate::config::deserialize_threshold;
 
 
-#[derive(Deserialize)]
-#[serde(default)]
 pub struct MatDiff {
     pub blur: GaussianBlur,
     pub dilate: Dilate,
-    #[serde(deserialize_with="deserialize_threshold")]
     pub threshold: Threshold,
     pub contours: FindContours,
     pub contour_area_threshold: i32,

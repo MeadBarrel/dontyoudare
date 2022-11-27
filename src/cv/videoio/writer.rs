@@ -9,8 +9,6 @@ use opencv::core::Size;
 use opencv::imgproc::{InterpolationFlags, resize};
 use opencv::videoio::VideoWriter;
 use log::*;
-use serde::Deserialize;
-use crate::config::deserialize_fourcc;
 
 
 pub trait VideoFileWriterTrait {
@@ -72,22 +70,15 @@ pub enum FrameSizeConfig {
 ///     - is_color: If it is not zero, the encoder will expect and encode color frames,
 ///                 otherwise it will work with grayscale frames.
 ///
-#[derive(Deserialize)]
-#[serde(default)]
 pub struct VideoFileWriter {
-    #[serde(deserialize_with="deserialize_fourcc")]
     fourcc: i32,
-    #[serde(skip_deserializing)]
     fps: FPSConfig,
-    #[serde(skip_deserializing)]
     frame_size: FrameSizeConfig,
     api_preference: Option<i32>,
     is_color: bool,
 }
 
 
-#[derive(Deserialize)]
-#[serde(default)]
 pub struct VideoFileDirWriter {
     writer: VideoFileWriter,
     filename_format: String,

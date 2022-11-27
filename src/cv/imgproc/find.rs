@@ -2,16 +2,12 @@ use opencv::Result;
 use opencv::core::{Point, ToInputArray};
 use opencv::imgproc::{CHAIN_APPROX_TC89_KCOS, find_contours, RETR_TREE};
 use opencv::types::VectorOfMat;
-use serde::Deserialize;
-use crate::config::deserialize_point;
 
 
-#[derive(Debug, Clone, Copy, Deserialize)]
-#[serde(default)]
+#[derive(Debug, Clone, Copy)]
 pub struct FindContours {
     mode: i32,
     color_approximation: i32,
-    #[serde(deserialize_with="deserialize_point")]
     offset: Point,
 }
 

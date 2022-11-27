@@ -13,8 +13,7 @@ use opencv::imgproc::{InterpolationFlags, MORPH_ELLIPSE, THRESH_BINARY};
 use simplelog::Config;
 
 use ropencv::camera::{Handler, MatDiff, MotionDetect, StatesConfig, Writer};
-use ropencv::camera::motion::motion::MotionDetectConfig;
-use ropencv::cv::{Dilate, FindContours, FPSConfig, FrameSizeConfig, GaussianBlur, StructuringElement, Threshold, VideoFileDirWriter, VideoFileWriter, VideoFileWriterTrait};
+use ropencv::cv::*;
 use super::config::DiffConfig;
 //use ropencv::camera::motion::motion::MotionDetectConfig;
 
