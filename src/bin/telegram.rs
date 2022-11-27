@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 use anyhow::Result;
 use log::info;
 use teloxide::{
@@ -14,6 +15,8 @@ use teloxide::{
 };
 use teloxide::types::InputFile;
 use tokio;
+use tokio::time::sleep;
+
 
 use ropencv::signals::*;
 
@@ -40,7 +43,7 @@ pub fn run(sender: Sender, receiver: Receiver) -> Result<()>
 pub async fn start_bot(sender: Sender, receiver: Receiver) -> Result<()> {
     let chat_id: ChatId = ChatId( std::env::var("CHAT_ID")?.parse()? ) ;
 
-    let bot = Arc::new(Bot::from_env());
+    let bot = Bot::from_env();
 
     let handler = dptree::entry().branch(
         Update::filter_message().endpoint(handle_commands)
@@ -58,8 +61,9 @@ pub async fn start_bot(sender: Sender, receiver: Receiver) -> Result<()> {
 }
 
 
-async fn notificator_loop(bot: Arc<Bot>, receiver: Receiver, chat_id: ChatId) -> Result<()> {
+async fn notificator_loop(bot: Bot, receiver: Receiver, chat_id: ChatId) -> Result<()> {
     loop {
+        sleep(Duration::from_secs(1)).await;
         match receiver.try_recv() {
             Ok(Signal::MotionCaptured(path)) => {
                 info!("Captured motion at {:?}", path);
@@ -73,7 +77,7 @@ async fn notificator_loop(bot: Arc<Bot>, receiver: Receiver, chat_id: ChatId) ->
 }
 
 
-async fn handle_commands(_: Arc<Bot>, msg: Message, sender: Sender, chat_id: ChatId) -> Result<()> {
+async fn handle_commands(bot: Bot, msg: Message, sender: Sender, chat_id: ChatId) -> Result<()> {
 
     // Make sure that only our chat is supported
     if chat_id != msg.chat.id {
